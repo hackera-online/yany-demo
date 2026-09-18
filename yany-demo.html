@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yany Steak & Wine × Hackera — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#171012;
+    --paper-2:#20171A;
+    --ink:#F3EAE2;
+    --ink-soft:#B3A196;
+    --line:#3A2A2C;
+    --accent:#C9975B;
+    --accent-contrast:#171012;
+    --wine:#6E1F2A;
+    --success:#7FB07A;
+    --success-bg:#1E2A1D;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --paper:#FBF6F0;
+      --paper-2:#F1E7DB;
+      --ink:#241713;
+      --ink-soft:#6E5B51;
+      --line:#E4D3C1;
+      --accent:#9C6B32;
+      --accent-contrast:#FBF6F0;
+      --wine:#6E1F2A;
+      --success:#3E7A4C;
+      --success-bg:#E3EFE4;
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#FBF6F0; --paper-2:#F1E7DB; --ink:#241713; --ink-soft:#6E5B51; --line:#E4D3C1;
+    --accent:#9C6B32; --accent-contrast:#FBF6F0; --wine:#6E1F2A; --success:#3E7A4C; --success-bg:#E3EFE4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:'Work Sans', -apple-system, sans-serif; line-height:1.55; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Playfair Display', Georgia, serif; font-weight:600; margin:0;}
+  a{color:inherit;}
+
+  nav{display:flex; align-items:center; justify-content:space-between; padding:26px 24px; border-bottom:1px solid var(--line);}
+  .wordmark{font-family:'Playfair Display', serif; font-size:19px; letter-spacing:0.02em;}
+  .wordmark span{color:var(--accent);}
+  .badge{font-size:11.5px; color:var(--ink-soft); border:1px solid var(--line); padding:5px 11px; border-radius:99px;}
+
+  .hero{display:grid; grid-template-columns:1.1fr 0.9fr; gap:40px; align-items:center; padding:64px 24px 56px; max-width:1040px; margin:0 auto;}
+  .hero h1{font-size:clamp(30px,4.2vw,44px); line-height:1.18; font-weight:600;}
+  .hero p{color:var(--ink-soft); font-size:16.5px; max-width:46ch; margin-top:18px; font-family:'Work Sans', sans-serif;}
+  .hero-note{margin-top:26px; font-size:13px; color:var(--ink-soft); display:flex; gap:8px; align-items:baseline;}
+  .hero-note::before{content:"—"; color:var(--accent);}
+  .glass{width:100%; height:auto; transition:transform .15s ease-out;}
+  @media (max-width:760px){ .hero{grid-template-columns:1fr; padding-top:44px;} .glass{max-width:240px; margin:0 auto;} }
+
+  section{padding:60px 24px; border-top:1px solid var(--line);}
+  .section-inner{max-width:920px; margin:0 auto;}
+  .eyebrow-line{display:flex; align-items:center; gap:14px; margin-bottom:26px; color:var(--ink-soft); font-size:14px;}
+  .eyebrow-line .num{font-family:'Playfair Display', serif; color:var(--accent); font-size:16px; font-style:italic;}
+  .eyebrow-line .rule{flex:1; height:1px; background:var(--line);}
+
+  .observed-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:44px;}
+  .observed-grid blockquote{margin:0; font-family:'Playfair Display', serif; font-size:22px; line-height:1.48; font-weight:500;}
+  .observed-grid blockquote span{color:var(--accent);}
+  .tags{display:flex; flex-wrap:wrap; gap:10px; align-content:flex-start;}
+  .tag{border:1px solid var(--line); padding:9px 14px; border-radius:99px; font-size:13.5px; color:var(--ink-soft);}
+  @media (max-width:700px){ .observed-grid{grid-template-columns:1fr;} }
+
+  .chat-frame{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--paper-2); max-width:560px; margin:0 auto;}
+  .chat-topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--line);}
+  .chat-topbar .who{display:flex; align-items:center; gap:10px; font-size:14px;}
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--success); flex:none;}
+  .chat-body{min-height:300px; padding:20px 18px; display:flex; flex-direction:column; gap:12px;}
+  .bubble{max-width:82%; padding:10px 14px; border-radius:12px; font-size:14.5px; line-height:1.5; opacity:0; transform:translateY(6px); animation:rise .35s ease forwards;}
+  @keyframes rise{ to{opacity:1; transform:translateY(0);} }
+  .bubble.visitor{align-self:flex-end; background:var(--accent); color:var(--accent-contrast); border-bottom-right-radius:3px;}
+  .bubble.ai{align-self:flex-start; background:var(--paper); border:1px solid var(--line); border-bottom-left-radius:3px;}
+  .typing{align-self:flex-start; display:flex; gap:4px; padding:12px 14px; background:var(--paper); border:1px solid var(--line); border-radius:12px; opacity:0; animation:rise .25s ease forwards;}
+  .typing i{width:6px; height:6px; border-radius:50%; background:var(--ink-soft); display:inline-block; animation:blink 1.1s infinite;}
+  .typing i:nth-child(2){animation-delay:.15s;} .typing i:nth-child(3){animation-delay:.3s;}
+  @keyframes blink{ 0%,80%,100%{opacity:.25;} 40%{opacity:1;} }
+  .chat-footer{padding:16px 18px; border-top:1px solid var(--line); text-align:center;}
+  .play-btn{background:var(--accent); color:var(--accent-contrast); border:none; padding:12px 26px; font-family:'Work Sans', sans-serif; font-size:12.5px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; border-radius:2px; cursor:pointer;}
+  .play-btn:disabled{opacity:.45; cursor:default;}
+  .replay-btn{background:none; border:1px solid var(--line); color:var(--ink-soft); padding:9px 16px; font-size:13px; border-radius:6px; cursor:pointer; display:none;}
+
+  .lead-wrap{max-width:420px; margin:26px auto 0; opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease;}
+  .lead-wrap.shown{opacity:1; transform:translateY(0);}
+  .lead-card{border:1px solid var(--line); border-radius:12px; background:var(--paper-2); overflow:hidden;}
+  .lead-head{padding:12px 16px; border-bottom:1px solid var(--line); font-size:12.5px; letter-spacing:0.02em; color:var(--ink-soft); display:flex; justify-content:space-between;}
+  .lead-rows{padding:16px;}
+  .lead-row{display:flex; justify-content:space-between; padding:7px 0; font-size:14px; border-bottom:1px dashed var(--line);}
+  .lead-row:last-of-type{border-bottom:none;}
+  .lead-row span:first-child{color:var(--ink-soft);}
+  .lead-score{margin-top:12px; display:flex; align-items:center; justify-content:space-between; background:var(--success-bg); color:var(--success); padding:9px 12px; border-radius:8px; font-size:13.5px; font-weight:500;}
+  .lead-actions{display:flex; gap:8px; padding:0 16px 16px;}
+  .lead-actions div{flex:1; text-align:center; font-size:12.5px; border:1px solid var(--line); border-radius:8px; padding:9px 6px; color:var(--ink-soft);}
+
+  .flow{max-width:560px; margin:0 auto;}
+  .flow-row{display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:6px;}
+  .flow-box{border:1px solid var(--line); border-radius:10px; padding:12px 16px; font-size:13.5px; text-align:center; background:var(--paper-2); flex:1;}
+  .flow-box.main{border-color:var(--accent); color:var(--accent); font-weight:600; background:transparent;}
+  .flow-arrow{display:flex; justify-content:center; color:var(--ink-soft); font-size:15px; margin:2px 0;}
+  .flow-queries{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:14px;}
+  .flow-queries span{font-size:12.5px; color:var(--ink-soft); border:1px solid var(--line); border-radius:99px; padding:5px 12px;}
+
+  .ticker-wrap{max-width:560px; margin:34px auto 0; text-align:center;}
+  .ticker-label{font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft); opacity:.7; margin-bottom:10px;}
+  .ticker{display:inline-flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink-soft); min-width:260px; justify-content:center;}
+  .ticker .pulse{width:7px; height:7px; border-radius:50%; background:var(--success); flex:none; animation:pulse 1.8s infinite;}
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+  .ticker span.txt{transition:opacity .35s ease;}
+  .ticker span.txt.fading{opacity:0;}
+
+  footer{padding:56px 24px 70px; text-align:center;}
+  footer .cta-line{font-family:'Playfair Display', serif; font-size:22px; margin-bottom:10px; font-weight:600;}
+  footer .cta-line b{color:var(--accent);}
+  footer p{color:var(--ink-soft); font-size:13.5px; max-width:44ch; margin:0 auto;}
+  footer .disclaimer{margin-top:26px; font-size:12px; color:var(--ink-soft); opacity:.7;}
+
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1 !important; transform:none !important; transition:none !important;}
+    .bubble,.typing,.lead-wrap{animation:none !important; transition:none !important; opacity:1 !important; transform:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wordmark">Yany <span>Steak & Wine</span></div>
+  <div class="badge">DEMO — концепция от Hackera</div>
+</nav>
+
+<div class="hero">
+  <div class="reveal">
+    <h1>Всеки посетител на сайта Ви получава маса за секунди, не след дълго чакане на телефона</h1>
+    <p>Демонстрация как AI асистент приема резервация направо в разговор — брой гости, час, специални поводи — и потвърждава масата веднага, без обаждане в busy hour.</p>
+    <div class="hero-note">2-минутна демонстрация, изградена специално за Yany Steak & Wine</div>
+  </div>
+  <svg class="glass" id="glassSvg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
+    <path d="M60 30 Q60 110 100 120 Q140 110 140 30 Z" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+    <line x1="100" y1="120" x2="100" y2="190" stroke="var(--accent)" stroke-width="1.6"/>
+    <line x1="65" y1="200" x2="135" y2="200" stroke="var(--accent)" stroke-width="1.6"/>
+    <line x1="60" y1="30" x2="140" y2="30" stroke="var(--ink)" stroke-width="1" opacity="0.4"/>
+    <path d="M65 80 Q100 95 135 80" fill="none" stroke="var(--wine)" stroke-width="1.3" opacity="0.7"/>
+    <text x="18" y="245" font-family="Work Sans" font-size="9" fill="var(--ink-soft)" letter-spacing="1">МАСА ЗА ДВАМА — 20:00</text>
+  </svg>
+</div>
+
+<section>
+  <div class="section-inner reveal">
+    <div class="eyebrow-line"><span class="num">Открихме</span><div class="rule"></div></div>
+    <div class="observed-grid">
+      <blockquote>Разгледахме Yany Steak & Wine и видяхме място с <span>изтънчена атмосфера</span> и подбрана селекция вина — но в натоварени вечери резервациите по телефон отнемат внимание от гостите в залата.</blockquote>
+      <div class="tags">
+        <div class="tag">Резервация на маса</div>
+        <div class="tag">Специални поводи</div>
+        <div class="tag">Винена листа</div>
+        <div class="tag">Групови резервации</div>
+        <div class="tag">Работно време</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-inner reveal">
+    <div class="eyebrow-line"><span class="num">AI асистент</span><div class="rule"></div></div>
+    <div class="chat-frame">
+      <div class="chat-topbar">
+        <div class="who"><span class="dot"></span>Yany — асистент</div>
+        <div style="font-size:12px; color:var(--ink-soft);">на сайта на ресторанта</div>
+      </div>
+      <div class="chat-body" id="chatBody"></div>
+      <div class="chat-footer">
+        <button class="play-btn" id="playBtn" onclick="startDemo()">Пусни демото</button>
+        <button class="replay-btn" id="replayBtn" onclick="startDemo()">Пусни отново</button>
+      </div>
+    </div>
+    <div class="lead-wrap" id="leadWrap">
+      <div class="lead-card">
+        <div class="lead-head"><span>Нова резервация</span><span>сега</span></div>
+        <div class="lead-rows">
+          <div class="lead-row"><span>Гости</span><span>2 души</span></div>
+          <div class="lead-row"><span>Дата и час</span><span>Събота, 20:00 ч.</span></div>
+          <div class="lead-row"><span>Повод</span><span>Годишнина</span></div>
+          <div class="lead-row"><span>Бележка</span><span>Маса до прозорец</span></div>
+          <div class="lead-score"><span>Lead Score</span><span>Висок</span></div>
+        </div>
+        <div class="lead-actions">
+          <div>→ Потвърди<br>масата</div>
+          <div>→ Изпрати<br>напомняне</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-inner reveal">
+    <div class="eyebrow-line"><span class="num">Как стигат дотук</span><div class="rule"></div></div>
+    <div class="flow">
+      <div class="flow-queries">
+        <span>„стек хаус софия резервация“</span><span>„ресторант с вино софия“</span>
+        <span>„маса за годишнина“</span><span>„ресторант близо до мен“</span>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-row"><div class="flow-box main">САЙТ НА YANY</div></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-row"><div class="flow-box">AI асистент приема резервацията директно</div></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-row"><div class="flow-box">Потвърдена маса и час</div></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-row"><div class="flow-box main">Гост на вратата</div></div>
+    </div>
+    <div class="ticker-wrap">
+      <div class="ticker-label">Пример за активност (илюстрация)</div>
+      <div class="ticker"><span class="pulse"></span><span class="txt" id="tickerTxt">Нова резервация — преди 3 мин</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="cta-line">Hackera → Website · SEO · <b>AI асистент</b> · Резервации</div>
+  <p>Гостите резервират сами, докато Вашият екип остава фокусиран върху залата — без пропуснати обаждания в най-натоварените часове.</p>
+  <div class="disclaimer">Демонстрационна страница, изготвена от Hackera за Yany Steak & Wine.</div>
+</footer>
+
+<script>
+  const script = [
+    {who:'visitor', text:'Здравейте, искам маса за двама в събота вечер.'},
+    {who:'ai', text:'Добре дошли! С удоволствие ще Ви запазя маса. В колко часа бихте искали да дойдете?'},
+    {who:'visitor', text:'Около 20:00 ч.'},
+    {who:'ai', text:'Отличен избор. Има ли специален повод — за да подготвим нещо специално?'},
+    {who:'visitor', text:'Да, годишнина от сватбата.'},
+    {who:'ai', text:'Честито предварително! Ще отбележим това и ще Ви запазим маса до прозореца, ако е свободна. Име за резервацията?'},
+    {who:'visitor', text:'Мария Петрова.'},
+    {who:'ai', text:'Готово — маса за двама, събота 20:00 ч., на името на Мария Петрова. Изпращам потвърждение веднага.'},
+  ];
+
+  let running = false;
+
+  function startDemo(){
+    if(running) return;
+    running = true;
+    const body = document.getElementById('chatBody');
+    const playBtn = document.getElementById('playBtn');
+    const replayBtn = document.getElementById('replayBtn');
+    const leadWrap = document.getElementById('leadWrap');
+    body.innerHTML = '';
+    leadWrap.classList.remove('shown');
+    playBtn.disabled = true;
+    playBtn.style.display = 'none';
+    replayBtn.style.display = 'none';
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let i = 0;
+
+    function step(){
+      if(i >= script.length){
+        running = false;
+        replayBtn.style.display = 'inline-block';
+        setTimeout(()=> leadWrap.classList.add('shown'), 250);
+        return;
+      }
+      const msg = script[i];
+      if(reduced){ addBubble(msg); i++; step(); return; }
+      const typingEl = document.createElement('div');
+      typingEl.className = 'typing';
+      typingEl.innerHTML = '<i></i><i></i><i></i>';
+      body.appendChild(typingEl);
+      body.scrollTop = body.scrollHeight;
+      setTimeout(()=>{
+        typingEl.remove();
+        addBubble(msg);
+        i++;
+        setTimeout(step, msg.who === 'ai' ? 600 : 420);
+      }, msg.who === 'ai' ? 750 : 480);
+    }
+
+    function addBubble(msg){
+      const el = document.createElement('div');
+      el.className = 'bubble ' + msg.who;
+      el.textContent = msg.text;
+      body.appendChild(el);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    step();
+  }
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+  }, {threshold:0.15});
+  revealEls.forEach(el=> revealObs.observe(el));
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const glass = document.getElementById('glassSvg');
+  if(glass && !reducedMotion && window.matchMedia('(pointer: fine)').matches){
+    const hero = document.querySelector('.hero');
+    hero.addEventListener('mousemove', (e)=>{
+      const r = hero.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      glass.style.transform = `rotateY(${px*7}deg) rotateX(${-py*7}deg)`;
+    });
+    hero.addEventListener('mouseleave', ()=>{ glass.style.transform = 'rotateY(0) rotateX(0)'; });
+  }
+
+  const chatFrame = document.querySelector('.chat-frame');
+  if(chatFrame){
+    const chatObs = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ startDemo(); chatObs.unobserve(e.target); } });
+    }, {threshold:0.5});
+    chatObs.observe(chatFrame);
+  }
+
+  const tickerMsgs = [
+    'Нова резервация — преди 3 мин',
+    'Потвърдена маса за 4-ма — преди 12 мин',
+    'AI отговори за 3 сек',
+    'Запитване за винена листа — преди 20 мин'
+  ];
+  const tickerEl = document.getElementById('tickerTxt');
+  if(tickerEl && !reducedMotion){
+    let t = 0;
+    setInterval(()=>{
+      tickerEl.classList.add('fading');
+      setTimeout(()=>{ t=(t+1)%tickerMsgs.length; tickerEl.textContent = tickerMsgs[t]; tickerEl.classList.remove('fading'); }, 350);
+    }, 3200);
+  }
+</script>
+</body>
+</html>
